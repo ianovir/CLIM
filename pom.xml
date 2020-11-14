@@ -22,13 +22,18 @@
     </developers>
     <distributionManagement>
         <repository>
-            <id>bintray-repo-maven-example</id>
-            <url>https://api.bintray.com/maven/ianovir/clim/;publish=1</url>
+            <id>CLIM</id>
+            <url>https://api.bintray.com/maven/ianovir/CLIM/com.ianovir.clim/;publish=1</url>
         </repository>
     </distributionManagement>
     <groupId>com.ianovir.clim</groupId>
     <artifactId>CLIM</artifactId>
     <version>1.0</version>
+    <licenses>
+        <license>
+            <name>Apache License, 2.0</name>
+        </license>
+    </licenses>
     <build>
         <plugins>
             <plugin>
