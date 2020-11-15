@@ -103,6 +103,11 @@ Entry newEntry = new Entry("New Entry") {
 ### Streams
 CLIM's `Stream` is an object used for streaming input and output data. By default, the `Engine` uses `ScannerInputStream` and `SystemOutputStream` which uses the `System.in` and `System.out` streams. You can define your custom streams by implementing the `InputStream` and `OutputStream` classes.
 
+It is possible to assign custom streams to the engine:
+```java
+engine.setInputStream(customInputStream);
+engine.setOutStream(customOutputStream);
+```
 
 # Copyright
 Copyright(c) 2020 Sebastiano Campisi - [ianovir.com](https://ianovir.com). 
