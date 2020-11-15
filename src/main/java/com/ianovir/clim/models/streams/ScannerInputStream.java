@@ -9,11 +9,10 @@ import java.util.Scanner;
  * The default input stream getting inputs from the standard system input.
  */
 public class ScannerInputStream extends InputStream {
-    Scanner sc;
+    private Scanner sc;
 
     public ScannerInputStream(Engine subscriber) {
         super(subscriber);
-        int i = -1;
         sc  = new Scanner(System.in);
     }
 

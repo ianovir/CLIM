@@ -10,6 +10,7 @@ import com.ianovir.clim.models.streams.ScannerInputStream;
 import com.ianovir.clim.models.streams.SystemOutputStream;
 
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Sebastiano Campisi (ianovir)
@@ -19,9 +20,7 @@ import java.util.Stack;
 public class Engine {
 
     private String name;
-    //current menu
     private Menu currentMenu;
-    // all menus
     private Stack<Menu> menus;
     private InputStream inStream;
     private OutputStream outStream;
@@ -164,11 +163,17 @@ public class Engine {
     public void setOutStream(OutputStream outStream) {
         this.outStream = outStream;
     }
+
     private void present() {
         outStream.onOutput(name);
     }
 
     private void printHUT() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         outStream.onOutput(getCurrentMenu().getHUT());
     }
 }

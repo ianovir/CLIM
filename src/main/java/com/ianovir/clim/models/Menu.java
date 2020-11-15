@@ -107,7 +107,7 @@ public class Menu {
         sb.append(name.toUpperCase() + "\n");
         int mac = 0;
         for(Entry ma : entries) sb.append( mac++ + ". " + ma.getName() + "\n");
-        sb.append( mac++ + ". " + exitAction + "\n\n");
+        sb.append( mac++ + ". " + exitAction + "\n\n>>");
 
         return sb.toString();
     }

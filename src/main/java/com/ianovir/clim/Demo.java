@@ -8,14 +8,15 @@ import java.util.LinkedList;
 
 public class Demo {
 
+    /**
+     * Sample demo showing how to handle a list of strings with CLIM
+     */
     public static void main(String[] args) {
 
         Engine engine = new Engine("CLIM DEMO");
 
-        //EXAMPLE: handle a list
         LinkedList<String> values = new LinkedList<>();
 
-        // Building menus (nested)
         Menu mainMenu = engine.buildMenu("Main menu");
 
         mainMenu.addEntry(new Entry("List values ") {
@@ -34,19 +35,23 @@ public class Demo {
                 engine.print("Type new value:");
                 String newVal = engine.forceRead();
 
+                //building a nested menu:
                 Menu addMenu = engine.buildMenu("Add option", "back");
+
                 addMenu.addEntry(new Entry("Add First") {
                     @Override
                     public void onAction() {
                         values.addFirst(newVal);
                     }
                 });
+
                 addMenu.addEntry(new Entry("Add Last") {
                     @Override
                     public void onAction() {
                         values.addLast(newVal);
                     }
                 });
+
                 addMenu.addEntry(new Entry("Add at index...") {
                     @Override
                     public void onAction() {
@@ -75,7 +80,7 @@ public class Demo {
         });
 
         Menu secondMenu = engine.buildMenu("Second menu", "cancel");
-        //secondMenu.removeOnAction(true);
+
         secondMenu.addEntry(new Entry("Pop this menu") {
             @Override
             public void onAction() {
@@ -91,12 +96,10 @@ public class Demo {
         });
 
         mainMenu.addSubMenu(secondMenu);
-
-        // Assigning main menu to engine
         engine.addOnTop(mainMenu);
-
         engine.start();
 
+        //blocking:
         while(engine.isRunning()){}
 
     }
