@@ -8,14 +8,14 @@ import java.util.LinkedList;
  */
 public class Menu {
     private String name;
+    private String description;
     private LinkedList<Entry> entries;
     boolean removeOnInvalidChoice = false;
     private boolean isRemoved;
-    private String exitAction = "exit";
+    private String exitText = "exit";
     private String headerSeparator = "-------------";
     private boolean removeOnAction = false; // remove this menu on every action perform
     private Engine engine;
-    //TODO: allow to hide the ExitAction
 
     /**
      *
@@ -36,7 +36,7 @@ public class Menu {
      */
     public Menu(String name, String exitText, Engine engine) {
         this(name, engine);
-        exitAction = exitText;
+        this.exitText = exitText;
     }
 
     /**
@@ -76,7 +76,7 @@ public class Menu {
      */
     public boolean onChoice(int entry){
 
-        if(entry== entries.size()) return !(isRemoved = true); //exit
+        if(entry== entries.size()) return !(isRemoved = true);
         if(entry <0 || entry> entries.size())  return false;
 
         Entry cEntry = entries.get(entry);
@@ -105,9 +105,10 @@ public class Menu {
         StringBuilder sb = new StringBuilder();
         if(headerSeparator != null) sb.append("\n"+ headerSeparator + "\n");
         sb.append(name.toUpperCase() + "\n");
+        if(description!=null && !description.equals("")) sb.append(description + "\n");
         int mac = 0;
         for(Entry ma : entries) sb.append( mac++ + ". " + ma.getName() + "\n");
-        sb.append( mac++ + ". " + exitAction + "\n\n>>");
+        sb.append( mac++ + ". " + exitText + "\n\n>>");
 
         return sb.toString();
     }
@@ -140,4 +141,13 @@ public class Menu {
     public void removeOnAction(boolean removeOnAction) {
         this.removeOnAction = removeOnAction;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

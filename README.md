@@ -1,7 +1,7 @@
 CLIM
 =======
 
-Command line interface menu (CLIM) engine for Java offers a very simple system to manage GUI menus via the cli.
+Command line interface menu (CLIM) engine for JVM offers a very simple system to manage UI menus via the cli.
 
 ![p1](https://github.com/ianovir/CLIM/blob/master/pics/ctrl_console.jpg)
 
@@ -27,7 +27,7 @@ repositories {
 Then add it as dependency:
 ```
 dependencies {
-    implementation 'com.ianovir.clim:CLIM:1.0'
+    implementation 'com.ianovir.clim:CLIM'
 }
 ``` 
 

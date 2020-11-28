@@ -18,14 +18,19 @@ public class Demo {
         LinkedList<String> values = new LinkedList<>();
 
         Menu mainMenu = engine.buildMenu("Main menu");
+        mainMenu.setDescription("List of Strings example...");
 
         mainMenu.addEntry(new Entry("List values ") {
             @Override
             public void onAction() {
-                int v = 0;
-                engine.print("Values:");
-                for(String s : values) engine.print(v++  + ": " +s);
-                engine.print("--FINISH--\n");
+                if(!values.isEmpty()){
+                    engine.print("Values:");
+                    int v = 0;
+                    for(String s : values) engine.print(v++  + ": " +s);
+                    engine.print("--end of list--");
+                }else{
+                    engine.print("--list empty--");
+                }
             }
         });
 
@@ -36,7 +41,8 @@ public class Demo {
                 String newVal = engine.forceRead();
 
                 //building a nested menu:
-                Menu addMenu = engine.buildMenu("Add option", "back");
+                Menu addMenu = engine.buildMenu("'Add' option", "back");
+                addMenu.setDescription("Choose insert position:");
 
                 addMenu.addEntry(new Entry("Add First") {
                     @Override
