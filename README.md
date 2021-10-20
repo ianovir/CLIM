@@ -89,7 +89,7 @@ engine.addOnTop(mainMenu);
 
 To create a menu and add it on top automatically, use:
 ```java
-Menu myMenu = engine.addOnTop(mainMenu);
+Menu myMenu = engine.buildMenuOnTop("My Menu");
 ```
 
 
