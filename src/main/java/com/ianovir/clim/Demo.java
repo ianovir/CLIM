@@ -5,24 +5,28 @@ import com.ianovir.clim.models.Menu;
 import com.ianovir.clim.models.Entry;
 
 import java.util.LinkedList;
+import java.util.concurrent.CountDownLatch;
 
 public class Demo {
+
+    private static CountDownLatch latch;
 
     /**
      * Sample demo showing how to handle a list of strings with CLIM
      */
     public static void main(String[] args) {
 
+        initLatch();
+
         Engine engine = new Engine("CLIM DEMO");
 
         LinkedList<String> values = new LinkedList<>();
-
-        Menu mainMenu = engine.buildMenu("Main menu");
+        Menu mainMenu = engine.buildMenuOnTop("Main menu");
         mainMenu.setDescription("List of Strings example...");
 
-        mainMenu.addEntry(new Entry("List values ") {
-            @Override
-            public void onAction() {
+        //create new entry by using its constructor...
+        Entry entry1 = new Entry("List values ",
+            ()-> {
                 if(!values.isEmpty()){
                     engine.print("Values:");
                     int v = 0;
@@ -32,81 +36,66 @@ public class Demo {
                     engine.print("--list empty--");
                 }
             }
-        });
+        );
 
-        mainMenu.addEntry(new Entry("Add value") {
-            @Override
-            public void onAction() {
+        mainMenu.addEntry(entry1);
+
+        //... or by using the wrapped way provided by Menu
+        mainMenu.addEntry("Add value", ()-> {
                 engine.print("Type new value:");
                 String newVal = engine.forceRead();
 
                 //building a nested menu:
-                Menu addMenu = engine.buildMenu("'Add' option", "back");
+                Menu addMenu = engine.buildMenuOnTop("'Add' option", "back");
                 addMenu.setDescription("Choose insert position:");
 
-                addMenu.addEntry(new Entry("Add First") {
-                    @Override
-                    public void onAction() {
-                        values.addFirst(newVal);
-                    }
-                });
+                addMenu.addEntry("Add First", ()-> values.addFirst(newVal));
 
-                addMenu.addEntry(new Entry("Add Last") {
-                    @Override
-                    public void onAction() {
-                        values.addLast(newVal);
-                    }
-                });
+                addMenu.addEntry("Add Last", () -> values.addLast(newVal));
 
-                addMenu.addEntry(new Entry("Add at index...") {
-                    @Override
-                    public void onAction() {
+                addMenu.addEntry("Add at index...", ()-> {
                         try{
                             engine.print("Add index: ");
                             int index = Integer.parseInt(engine.forceRead());
                             values.add(index, newVal);
                         }catch(Exception e){engine.print("Failed!");}
                     }
-                });
+                );
 
                 addMenu.removeOnAction(true);
                 engine.addOnTop(addMenu);
-            }
-        });
+                    });
 
-        mainMenu.addEntry(new Entry("Remove value") {
-            @Override
-            public void onAction() {
+        mainMenu.addEntry("Remove value", ()-> {
                 try{
                     engine.print("Remove index: ");
                     int index = Integer.parseInt(engine.forceRead());
                     values.remove(index);
                 }catch(Exception e){engine.print("Failed!");}
             }
-        });
+        );
 
-        Menu secondMenu = engine.buildMenu("Second menu", "cancel");
-
-        secondMenu.addEntry(new Entry("Pop this menu") {
-            @Override
-            public void onAction() {
-                engine.popMenu();
-            }
-        });
-
-        secondMenu.addEntry(new Entry("Another action") {
-            @Override
-            public void onAction() {
-                //do nothing
-            }
-        });
+        Menu secondMenu = engine.buildMenuOnTop("Second menu", "cancel");
+        secondMenu.addEntry("Pop this menu", engine::popMenu);
+        secondMenu.addEntry("Another action", ()->{/*do nothing*/});
 
         mainMenu.addSubMenu(secondMenu);
-        engine.addOnTop(mainMenu);
+        mainMenu.setExitAction(()->latch.countDown());//releasing latch (count=1)
+
         engine.start();
 
-        //blocking:
-        while(engine.isRunning()){}
 
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void initLatch() {
+        //using cd latch to block the thread while the engine is running
+        //to avoid "while(engine.isRunning()){}"
+        latch = new CountDownLatch(1);
     }
 }

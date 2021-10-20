@@ -5,19 +5,30 @@ package com.ianovir.clim.models;
  * @author Sebastiano Campisi (ianovir)
  * An Entry is the basic element composing a menu.
  */
-public abstract class Entry {
+public  class Entry {
+    private Action action;
     private String name;
     private boolean isVisible;
 
-    /**
-     *
-     * @param name The name of the entry, that is the text displayed on the menu the entry belongs to.
-     */
+    @Deprecated
     public Entry(String name) {
-        this.name = name;
+        this(name, null);
     }
 
-    public abstract void onAction();
+    /**
+     *
+     * @param name the text listed on the menu the entry belongs to.
+     * @param action action to be performed when the entry is chosen
+     */
+    public Entry(String name, Action action) {
+        this.name = name;
+        isVisible = true;
+        this.action = action;
+    }
+
+    public void onAction(){
+        if(action!=null) action.doJob();
+    }
 
     public String getName() {
         return name;
@@ -38,4 +49,9 @@ public abstract class Entry {
     public void setVisible(boolean visible) {
         isVisible = visible;
     }
+
+    public interface Action{
+        void doJob();
+    }
+
 }

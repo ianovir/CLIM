@@ -16,6 +16,8 @@ public class Menu {
     private String headerSeparator = "-------------";
     private boolean removeOnAction = false; // remove this menu on every action perform
     private Engine engine;
+    private Entry.Action exitAction;
+
 
     /**
      *
@@ -47,18 +49,21 @@ public class Menu {
         entries.addLast(newEntry);
     }
 
+    public void addEntry(String eName, Entry.Action eAction){
+        addEntry(new Entry(eName, eAction));
+    }
+
     /**
      * Add a new menu as sub entry with a custom entry text (different from menu's name)
      * @param submenu The new menu to be added
      * @param entryText the custom entry text if different from menu's name
      */
     public void addSubMenu(Menu submenu, String entryText){
-        entries.addLast(new Entry(entryText) {
-            @Override
-            public void onAction() {
+        entries.addLast(new Entry(entryText, ()-> {
+                submenu.isRemoved = false;
                 engine.addOnTop(submenu);
             }
-        });
+        ));
     }
 
     /**
@@ -76,17 +81,28 @@ public class Menu {
      */
     public boolean onChoice(int entry){
 
-        if(entry== entries.size()) return !(isRemoved = true);
-        if(entry <0 || entry> entries.size())  return false;
+        if(entry <0 || entry >= entries.size()){
+            if(entry == entries.size()){
+                //exit action
+                if(exitAction!=null) exitAction.doJob();
+            }
+            isRemoved = removeOnInvalidChoice || isExitChoice(entry);
+            return false;
+        }
 
         Entry cEntry = entries.get(entry);
         if(cEntry !=null){
+            engine.print(cEntry.getName());
             cEntry.onAction();
-            isRemoved= removeOnAction;
+            isRemoved = removeOnAction;
             return true;
         }
-        if(removeOnInvalidChoice) isRemoved = true;
+
         return false;
+    }
+
+    private boolean isExitChoice(int entry) {
+        return entry== entries.size();
     }
 
     /**
@@ -103,12 +119,17 @@ public class Menu {
      */
     public String getHUT(){
         StringBuilder sb = new StringBuilder();
-        if(headerSeparator != null) sb.append("\n"+ headerSeparator + "\n");
-        sb.append(name.toUpperCase() + "\n");
-        if(description!=null && !description.equals("")) sb.append(description + "\n");
-        int mac = 0;
-        for(Entry ma : entries) sb.append( mac++ + ". " + ma.getName() + "\n");
-        sb.append( mac++ + ". " + exitText + "\n\n>>");
+        if(headerSeparator != null) sb.append("\n").append(headerSeparator).append("\n");
+
+        sb.append(name.toUpperCase()).append("\n");
+
+        if(description!=null && !description.equals("")) sb.append(description).append("\n");
+
+        int mac = 0; //starting index
+        for(Entry ma : entries){
+            sb.append(mac++).append(". ").append(ma.getName()).append("\n");
+        }
+        sb.append(mac).append(". ").append(exitText).append("\n\n>>");
 
         return sb.toString();
     }
@@ -125,7 +146,16 @@ public class Menu {
         this.headerSeparator = headerSeparator;
     }
 
+    @Deprecated
     public int getActionsCount(){
+        return getEntriesCount();
+    }
+
+    /**
+     *
+     * @return The count of entries in the menu, including the exit entry.
+     */
+    public int getEntriesCount(){
         return entries.size()+1;
     }
 
@@ -148,6 +178,15 @@ public class Menu {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+
+    /**
+     *
+     * @param exitAction The action to be performed on exit choice
+     */
+    public void setExitAction(Entry.Action exitAction){
+        this.exitAction = exitAction;
     }
 
 }

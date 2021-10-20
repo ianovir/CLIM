@@ -77,28 +77,35 @@ mainMenu.addEntry(newEntry);
 
 Or add a sub-menu as entry:
 ```java
-Menu secondMenu = engine.buildMenu("Second menu", "cancel");
+Menu secondMenu = new Menu("Second menu", "cancel", engine);
 //...
 mainMenu.addSubMenu(secondMenu);
 ```
 
-Finally add the menu to the engine:
+finally add the menu to the engine:
 ```java
 engine.addOnTop(mainMenu);
 ```
 
+To create a menu and add it on top automatically, use:
+```java
+Menu myMenu = engine.addOnTop(mainMenu);
+```
+
+
 ### Entry
 An `Entry` represents an option the user can choose. You need to implement the `onAction()` abstract method of an entry in order to specify its action.
 
-To create an Entry:
+To create an Entry use the constructor:
 ```java
-Entry newEntry = new Entry("New Entry") {
-	@Override
-	public void onAction() {
-		//implement entry's action...
-	}
-};
+Entry newEntry = new Entry("New Entry", ()->{/*do stuff...*/} );
 ```
+
+or use the wrapping method from menu object:
+```java
+myMenu.addEntry("New Entry", ()->{/*do stuff...*/} );
+```
+
 
 ### Streams
 CLIM's `Stream` is an object used for streaming input and output data. By default, the `Engine` uses `ScannerInputStream` and `SystemOutputStream` which uses the `System.in` and `System.out` streams. You can define your custom streams by implementing the `InputStream` and `OutputStream` classes.

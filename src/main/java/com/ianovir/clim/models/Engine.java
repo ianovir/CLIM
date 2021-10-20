@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Engine {
 
-    private String name;
+    private final String name;
+    private final Stack<Menu> menus;
     private Menu currentMenu;
-    private Stack<Menu> menus;
     private InputStream inStream;
     private OutputStream outStream;
     private boolean running = false;
@@ -67,10 +67,12 @@ public class Engine {
             currentMenu = menus.empty() ? null: menus.peek();
         }
         //engine stops if no more menus
-        if(currentMenu==null)
+        if(currentMenu==null){
             stop();
-        else
+        }
+        else{
             printHUT();
+        }
     }
 
     /**
@@ -86,6 +88,7 @@ public class Engine {
      * @param name the name of the new menu
      * @return the new built menu
      */
+    @Deprecated
     public Menu buildMenu(String name){
         return new Menu(name, this);
     }
@@ -96,8 +99,26 @@ public class Engine {
      * @param exitText the text for the exit text
      * @return the new built menu
      */
+    @Deprecated
     public Menu buildMenu(String name, String exitText){
         return new Menu(name, exitText, this);
+    }
+
+    /**
+     * Creates a new menu referencing the current engine; new menu will be added to the top of stack automatically.
+     * @param name the name of the new menu
+     * @return the new built menu
+     */
+    public Menu buildMenuOnTop(String name){
+        Menu m = new Menu(name, this);
+        addOnTop(m);
+        return m;
+    }
+
+    public Menu buildMenuOnTop(String name, String exitText){
+        Menu m = new Menu(name, exitText, this);
+        addOnTop(m);
+        return m;
     }
 
     /**
@@ -169,11 +190,13 @@ public class Engine {
     }
 
     private void printHUT() {
-        try {
-            TimeUnit.MILLISECONDS.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(currentMenu!=null){
+            outStream.onOutput(currentMenu.getHUT());
         }
-        outStream.onOutput(getCurrentMenu().getHUT());
     }
+
+    public int getMenuCount(){
+        return menus.size();
+    }
+
 }
