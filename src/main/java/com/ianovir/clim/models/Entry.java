@@ -6,8 +6,8 @@ package com.ianovir.clim.models;
  * An Entry is the basic element composing a menu.
  */
 public  class Entry {
-    private Action action;
-    private String name;
+    private final Action action;
+    private final String name;
     private boolean isVisible;
 
     @Deprecated
@@ -50,6 +50,7 @@ public  class Entry {
         isVisible = visible;
     }
 
+    @FunctionalInterface
     public interface Action{
         void doJob();
     }

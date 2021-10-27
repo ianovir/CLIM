@@ -7,8 +7,8 @@ package com.ianovir.clim.models.streams;
 public class SystemOutputStream implements  OutputStream{
 
     @Override
-    public void onOutput(String out) {
-        System.out.println(out);
+    public void put(String output) {
+        System.out.println(output);
     }
 
     @Override

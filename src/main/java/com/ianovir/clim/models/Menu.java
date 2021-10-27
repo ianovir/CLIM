@@ -1,23 +1,24 @@
 package com.ianovir.clim.models;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Sebastiano Campisi (ianovir)
  * A menu represents a list of entries.
  */
 public class Menu {
-    private String name;
+    private final String name;
+    private final Engine engine;
+    private final ArrayList<Entry> entries;
     private String description;
-    private LinkedList<Entry> entries;
     boolean removeOnInvalidChoice = false;
     private boolean isRemoved;
     private String exitText = "exit";
     private String headerSeparator = "-------------";
-    private boolean removeOnAction = false; // remove this menu on every action perform
-    private Engine engine;
+    private boolean removeOnAction = false; // remove this menu on every action performed
     private Entry.Action exitAction;
-
 
     /**
      *
@@ -26,7 +27,7 @@ public class Menu {
      */
     public Menu(String name, Engine engine) {
         this.name = name;
-        entries = new LinkedList<>();
+        entries = new ArrayList<>();
         this.engine = engine;
     }
 
@@ -42,15 +43,23 @@ public class Menu {
     }
 
     /**
-     * Add a new entry to menu.
+     * Add a new entry at the end of the entries list.
      * @param newEntry the new entry
      */
     public void addEntry(Entry newEntry){
-        entries.addLast(newEntry);
+        entries.add(newEntry);
     }
 
-    public void addEntry(String eName, Entry.Action eAction){
-        addEntry(new Entry(eName, eAction));
+    /**
+     * Adds a new Entry at the end of entries list
+     * @param eName Name of the new Entry
+     * @param eAction Action to be performed by the new entry
+     * @return the new added entry
+     */
+    public Entry addEntry(String eName, Entry.Action eAction){
+        Entry result = new Entry(eName, eAction);
+        addEntry(result);
+        return result;
     }
 
     /**
@@ -59,7 +68,7 @@ public class Menu {
      * @param entryText the custom entry text if different from menu's name
      */
     public void addSubMenu(Menu submenu, String entryText){
-        entries.addLast(new Entry(entryText, ()-> {
+        entries.add(new Entry(entryText, ()-> {
                 submenu.isRemoved = false;
                 engine.addOnTop(submenu);
             }
@@ -81,16 +90,13 @@ public class Menu {
      */
     public boolean onChoice(int entry){
 
-        if(entry <0 || entry >= entries.size()){
-            if(entry == entries.size()){
-                //exit action
-                if(exitAction!=null) exitAction.doJob();
-            }
+        if(isInvalidEntryChoice(entry)){
+            if(isExitChoice(entry) && exitAction!=null) exitAction.doJob();
             isRemoved = removeOnInvalidChoice || isExitChoice(entry);
             return false;
         }
 
-        Entry cEntry = entries.get(entry);
+        Entry cEntry = getVisibleEntries().get(entry);
         if(cEntry !=null){
             engine.print(cEntry.getName());
             cEntry.onAction();
@@ -101,8 +107,12 @@ public class Menu {
         return false;
     }
 
+    private boolean isInvalidEntryChoice(int entryIndex) {
+        return entryIndex <0 || entryIndex >= getVisibleEntries().size();
+    }
+
     private boolean isExitChoice(int entry) {
-        return entry== entries.size();
+        return entry== getVisibleEntries().size();
     }
 
     /**
@@ -126,12 +136,16 @@ public class Menu {
         if(description!=null && !description.equals("")) sb.append(description).append("\n");
 
         int mac = 0; //starting index
-        for(Entry ma : entries){
+        for(Entry ma : getVisibleEntries()){
             sb.append(mac++).append(". ").append(ma.getName()).append("\n");
         }
         sb.append(mac).append(". ").append(exitText).append("\n\n>>");
 
         return sb.toString();
+    }
+
+    private List<Entry> getVisibleEntries() {
+        return entries.stream().filter(Entry::isVisible).collect(Collectors.toList());
     }
 
     public String getHeaderSeparator() {
@@ -153,9 +167,17 @@ public class Menu {
 
     /**
      *
-     * @return The count of entries in the menu, including the exit entry.
+     * @return The count of visible entries in the menu, including the exit entry.
      */
     public int getEntriesCount(){
+        return getVisibleEntries().size()+1;
+    }
+
+    /**
+     *
+     * @return The count of entries (visible and not) in the menu, including the exit entry.
+     */
+    public int getTotalEntriesCount(){
         return entries.size()+1;
     }
 

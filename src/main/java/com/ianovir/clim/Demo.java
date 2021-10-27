@@ -55,8 +55,8 @@ public class Demo {
 
                 addMenu.addEntry("Add at index...", ()-> {
                         try{
-                            engine.print("Add index: ");
-                            int index = Integer.parseInt(engine.forceRead());
+                            String in = engine.forceRead("Add index: ");
+                            int index = Integer.parseInt(in);
                             values.add(index, newVal);
                         }catch(Exception e){engine.print("Failed!");}
                     }
@@ -68,22 +68,23 @@ public class Demo {
 
         mainMenu.addEntry("Remove value", ()-> {
                 try{
-                    engine.print("Remove index: ");
-                    int index = Integer.parseInt(engine.forceRead());
+                    String in = engine.forceRead("Remove index: ");
+                    int index = Integer.parseInt(in);
                     values.remove(index);
                 }catch(Exception e){engine.print("Failed!");}
             }
         );
 
-        Menu secondMenu = engine.buildMenuOnTop("Second menu", "cancel");
+        Menu secondMenu = new Menu("Poppable menu", "cancel", engine);
         secondMenu.addEntry("Pop this menu", engine::popMenu);
         secondMenu.addEntry("Another action", ()->{/*do nothing*/});
 
         mainMenu.addSubMenu(secondMenu);
+        mainMenu.addSubMenu(buildToggleEntriesMenu(engine));
         mainMenu.setExitAction(()->latch.countDown());//releasing latch (count=1)
 
         engine.start();
-
+        //use engine.stop() to stop the engine
 
         try {
             latch.await();
@@ -91,6 +92,18 @@ public class Demo {
             e.printStackTrace();
         }
 
+    }
+
+    private static Menu buildToggleEntriesMenu(Engine e) {
+        Menu menu = new Menu("Toggle Entries", e);
+        Entry a = menu.addEntry("Entry A", null);
+        Entry d = new Entry("Entry D", null);
+
+        menu.addEntry("Toggle Entry A", ()-> a.setVisible(!a.isVisible()));
+        menu.addEntry("Toggle Entry D", ()-> d.setVisible(!d.isVisible()));
+
+        menu.addEntry(d);
+        return menu;
     }
 
     private static void initLatch() {
