@@ -4,6 +4,11 @@ import com.ianovir.clim.models.Engine;
 
 import java.util.Scanner;
 
+
+/**
+ * @author Sebastiano Campisi (ianovir)
+ * Input Stream for the @{@link Engine}
+ */
 public abstract class InputStream implements Stream {
 
     protected final Engine engine;
@@ -53,7 +58,7 @@ public abstract class InputStream implements Stream {
 
     /**
      * Forces the read from the stream. Please, consider that this call will be called on separate thread. This call
-     * can be blocking.
+     * can be supposed to be blocking.
      * @return the
      */
     public abstract String forceRead();

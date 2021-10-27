@@ -89,7 +89,7 @@ engine.addOnTop(mainMenu);
 
 To create a menu and add it on top automatically, use:
 ```java
-Menu myMenu = engine.addOnTop(mainMenu);
+Menu myMenu = engine.buildMenuOnTop("My Menu");
 ```
 
 
@@ -103,9 +103,9 @@ Entry newEntry = new Entry("New Entry", ()->{/*do stuff...*/} );
 
 or use the wrapping method from menu object:
 ```java
-myMenu.addEntry("New Entry", ()->{/*do stuff...*/} );
+Entry newEntry = myMenu.addEntry("New Entry", ()->{/*do stuff...*/} );
 ```
-
+Change Entry's visibility to hide/show it on menu list.
 
 ### Streams
 CLIM's `Stream` is an object used for streaming input and output data. By default, the `Engine` uses `ScannerInputStream` and `SystemOutputStream` which uses the `System.in` and `System.out` streams. You can define your custom streams by implementing the `InputStream` and `OutputStream` classes.
@@ -117,5 +117,5 @@ engine.setOutStream(customOutputStream);
 ```
 
 # Copyright
-Copyright(c) 2020 Sebastiano Campisi - [ianovir.com](https://ianovir.com). 
+Copyright(c) 2021 Sebastiano Campisi - [ianovir.com](https://ianovir.com). 
 Read LICENSE file for more details.

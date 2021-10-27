@@ -10,7 +10,6 @@ import com.ianovir.clim.models.streams.ScannerInputStream;
 import com.ianovir.clim.models.streams.SystemOutputStream;
 
 import java.util.Stack;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Sebastiano Campisi (ianovir)
@@ -66,7 +65,7 @@ public class Engine {
             menus.pop();
             currentMenu = menus.empty() ? null: menus.peek();
         }
-        //engine stops if no more menus
+
         if(currentMenu==null){
             stop();
         }
@@ -166,11 +165,22 @@ public class Engine {
     }
 
     /**
+     * Forces the input stream to be read
+     * @param msg Message to print before read
+     * @return the read line
+     */
+    public String forceRead(String msg) {
+        outStream.put(msg);
+        return inStream.forceRead();
+    }
+
+
+    /**
      * Sends a message to the output stream
      * @param msg the content to show.
      */
     public void print(String msg) {
-        outStream.onOutput(msg);
+        outStream.put(msg);
     }
 
     /**
@@ -186,12 +196,12 @@ public class Engine {
     }
 
     private void present() {
-        outStream.onOutput(name);
+        outStream.put(name);
     }
 
     private void printHUT() {
         if(currentMenu!=null){
-            outStream.onOutput(currentMenu.getHUT());
+            outStream.put(currentMenu.getHUT());
         }
     }
 
