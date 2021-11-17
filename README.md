@@ -13,30 +13,6 @@ CLIM may be useful when prototyping core libraries in their early stage, in abse
 
 You can download the last compiled version of `CLIM` from the [releases](https://github.com/ianovir/CLIM/releases) page, or import it from maven bintray.
 
-## Gradle
-
-Add repository inside the gradle.build file:
-```
-repositories {
-    maven {
-        url  "https://dl.bintray.com/ianovir/CLIM" 
-    }
-}
-``` 
-
-Then add it as dependency:
-```
-dependencies {
-    implementation 'com.ianovir.clim:CLIM'
-}
-``` 
-
-## cURL
-
-```
-curl -L "https://dl.bintray.com/ianovir/CLIM/<FILE_PATH>" -o <FILE.EXT>
-```
-
 # Usage
 
 See the `Demo.java` for a simple example.
@@ -50,9 +26,8 @@ The main components of CLIM are:
 * Streams
 
 ### Engine
-`Engine` is the main component organizing menus, printing to `OutputStream` and reading from `InputStream`. Basically, an `Engine` wraps a Stack collection of menus and allows navigation across them.
-
-To create a new engine:
+`Engine` is the main component organizing menus, printing to `OutputStream` and reading from `InputStream`. 
+To create a new engine use its constructor:
 ```java
 Engine engine = new Engine("CLIM DEMO");
 ```
@@ -62,15 +37,21 @@ To start the engine:
 engine.start();
 ```
 
+To wait for the engine to terminate its execution (blocking call):
+```java
+engine.await();
+```
+
 ### Menu
 A `Menu` is a list of entries.
 
-The simplest way to create a menu is building it from the engine:
+The simplest way to create a menu is by using the engine's  method `buildMenu()`:
 ```java
 Menu mainMenu = engine.buildMenu("Main menu");
 ```
+this will create a new menu but it won't add it on the top of the engine.
 
-Then add as many entries as you want:
+Add as many entries as you want:
 ```java
 mainMenu.addEntry(newEntry);
 ```

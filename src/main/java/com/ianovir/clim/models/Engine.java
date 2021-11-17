@@ -10,6 +10,7 @@ import com.ianovir.clim.models.streams.ScannerInputStream;
 import com.ianovir.clim.models.streams.SystemOutputStream;
 
 import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Sebastiano Campisi (ianovir)
@@ -18,6 +19,7 @@ import java.util.Stack;
  */
 public class Engine {
 
+    private static final long WAIT_LOOP_MS = 500;
     private final String name;
     private final Stack<Menu> menus;
     private Menu currentMenu;
@@ -61,16 +63,23 @@ public class Engine {
      */
     public void onChoice(int entry){
         currentMenu.onChoice(entry);
-        if(currentMenu.isRemoved()){
-            menus.pop();
-            currentMenu = menus.empty() ? null: menus.peek();
-        }
+        manageMenuRemoval();
+        stopOrContinue();
+    }
 
+    private void stopOrContinue() {
         if(currentMenu==null){
             stop();
         }
         else{
             printHUT();
+        }
+    }
+
+    private void manageMenuRemoval() {
+        if(currentMenu.isRemoved()){
+            menus.pop();
+            currentMenu = menus.empty() ? null: menus.peek();
         }
     }
 
@@ -174,7 +183,6 @@ public class Engine {
         return inStream.forceRead();
     }
 
-
     /**
      * Sends a message to the output stream
      * @param msg the content to show.
@@ -207,6 +215,16 @@ public class Engine {
 
     public int getMenuCount(){
         return menus.size();
+    }
+
+    /**
+     * Waits for the engine to complete its execution (blocking)
+     * @throws InterruptedException
+     */
+    public void await() throws InterruptedException {
+        while(isRunning()){
+            Thread.sleep(WAIT_LOOP_MS);
+        }
     }
 
 }
