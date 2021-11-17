@@ -63,16 +63,23 @@ public class Engine {
      */
     public void onChoice(int entry){
         currentMenu.onChoice(entry);
-        if(currentMenu.isRemoved()){
-            menus.pop();
-            currentMenu = menus.empty() ? null: menus.peek();
-        }
+        manageMenuRemoval();
+        stopOrContinue();
+    }
 
+    private void stopOrContinue() {
         if(currentMenu==null){
             stop();
         }
         else{
             printHUT();
+        }
+    }
+
+    private void manageMenuRemoval() {
+        if(currentMenu.isRemoved()){
+            menus.pop();
+            currentMenu = menus.empty() ? null: menus.peek();
         }
     }
 

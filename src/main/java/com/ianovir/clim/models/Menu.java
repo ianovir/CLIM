@@ -84,27 +84,31 @@ public class Menu {
     }
 
     /**
-     * Forces the call to the action corresponding to the chosen entry
-     * @param entry the index of the entry in the menu
-     * @return True if an action has been properly triggered, False otherwise
+     * Forces the call to the action corresponding to the chosen entryIndex
+     * @param entryIndex the index of the entryIndex in the menu
      */
-    public boolean onChoice(int entry){
+    public void onChoice(int entryIndex){
 
-        if(isInvalidEntryChoice(entry)){
-            if(isExitChoice(entry) && exitAction!=null) exitAction.doJob();
-            isRemoved = removeOnInvalidChoice || isExitChoice(entry);
-            return false;
+        if(isInvalidEntryChoice(entryIndex)){
+            tryExecuteExitAction(entryIndex);
+        }else{
+            executeEntry(entryIndex);
         }
 
+    }
+
+    private void executeEntry(int entry) {
         Entry cEntry = getVisibleEntries().get(entry);
         if(cEntry !=null){
             engine.print(cEntry.getName());
             cEntry.onAction();
             isRemoved = removeOnAction;
-            return true;
         }
+    }
 
-        return false;
+    private void tryExecuteExitAction(int entry) {
+        if(isExitChoice(entry) && exitAction!=null) exitAction.doJob();
+        isRemoved = removeOnInvalidChoice || isExitChoice(entry);
     }
 
     private boolean isInvalidEntryChoice(int entryIndex) {
@@ -129,19 +133,33 @@ public class Menu {
      */
     public String getHUT(){
         StringBuilder sb = new StringBuilder();
-        if(headerSeparator != null) sb.append("\n").append(headerSeparator).append("\n");
-
-        sb.append(name.toUpperCase()).append("\n");
-
-        if(description!=null && !description.equals("")) sb.append(description).append("\n");
-
-        int mac = 0; //starting index
-        for(Entry ma : getVisibleEntries()){
-            sb.append(" ").append(mac++).append(". ").append(ma.getName()).append("\n");
-        }
-        sb.append(" ").append(mac).append(". ").append(exitText).append("\n\n>>");
-
+        putHutTitle(sb);
+        putHutDescription(sb);
+        int index = putHutEntries(sb);
+        putHutTrailer(sb, index);
         return sb.toString();
+    }
+
+    private void putHutTrailer(StringBuilder sb, int index) {
+        sb.append(" ").append(index).append(". ").append(exitText).append("\n\n>>");
+    }
+
+    private int putHutEntries(StringBuilder sb) {
+        int index = 0; //starting index
+        for(Entry ma : getVisibleEntries()){
+            sb.append(" ").append(index++).append(". ").append(ma.getName()).append("\n");
+        }
+        return index;
+    }
+
+    private void putHutDescription(StringBuilder sb) {
+        if(description!=null && !description.equals(""))
+            sb.append(description).append("\n");
+    }
+
+    private void putHutTitle(StringBuilder sb) {
+        if(headerSeparator != null) sb.append("\n").append(headerSeparator).append("\n");
+        sb.append(name.toUpperCase()).append("\n");
     }
 
     private List<Entry> getVisibleEntries() {
