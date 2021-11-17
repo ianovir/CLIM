@@ -217,7 +217,10 @@ public class Engine {
         return menus.size();
     }
 
-
+    /**
+     * Waits for the engine to complete its execution (blocking)
+     * @throws InterruptedException
+     */
     public void await() throws InterruptedException {
         while(isRunning()){
             Thread.sleep(WAIT_LOOP_MS);

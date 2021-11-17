@@ -88,13 +88,6 @@ Entry newEntry = myMenu.addEntry("New Entry", ()->{/*do stuff...*/} );
 ```
 Change Entry's visibility to hide/show it on menu list.
 
-If you want to create an entry to show a sub-menu, just call the `addSubMenu()`:
-```java
-Menu subMenu = ...
-myMenu.addSubMenu(subMenu);
-```
-an entry with the name of `subMenu` will be shown in `myMenu`.
-
 ### Streams
 CLIM's `Stream` is an object used for streaming input and output data. By default, the `Engine` uses `ScannerInputStream` and `SystemOutputStream` which uses the `System.in` and `System.out` streams. You can define your custom streams by implementing the `InputStream` and `OutputStream` classes.
 
