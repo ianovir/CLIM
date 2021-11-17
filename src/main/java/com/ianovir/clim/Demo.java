@@ -9,14 +9,10 @@ import java.util.concurrent.CountDownLatch;
 
 public class Demo {
 
-    private static CountDownLatch latch;
-
     /**
      * Sample demo showing how to handle a list of strings with CLIM
      */
     public static void main(String[] args) {
-
-        initLatch();
 
         Engine engine = new Engine("CLIM DEMO");
 
@@ -81,13 +77,11 @@ public class Demo {
 
         mainMenu.addSubMenu(secondMenu);
         mainMenu.addSubMenu(buildToggleEntriesMenu(engine));
-        mainMenu.setExitAction(()->latch.countDown());//releasing latch (count=1)
 
         engine.start();
-        //use engine.stop() to stop the engine
 
         try {
-            latch.await();
+            engine.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -104,11 +98,5 @@ public class Demo {
 
         menu.addEntry(d);
         return menu;
-    }
-
-    private static void initLatch() {
-        //using cd latch to block the thread while the engine is running
-        //to avoid "while(engine.isRunning()){}"
-        latch = new CountDownLatch(1);
     }
 }

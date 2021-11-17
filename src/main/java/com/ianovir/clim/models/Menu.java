@@ -137,9 +137,9 @@ public class Menu {
 
         int mac = 0; //starting index
         for(Entry ma : getVisibleEntries()){
-            sb.append(mac++).append(". ").append(ma.getName()).append("\n");
+            sb.append(" ").append(mac++).append(". ").append(ma.getName()).append("\n");
         }
-        sb.append(mac).append(". ").append(exitText).append("\n\n>>");
+        sb.append(" ").append(mac).append(". ").append(exitText).append("\n\n>>");
 
         return sb.toString();
     }
