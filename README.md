@@ -13,30 +13,6 @@ CLIM may be useful when prototyping core libraries in their early stage, in abse
 
 You can download the last compiled version of `CLIM` from the [releases](https://github.com/ianovir/CLIM/releases) page, or import it from maven bintray.
 
-## Gradle
-
-Add repository inside the gradle.build file:
-```
-repositories {
-    maven {
-        url  "https://dl.bintray.com/ianovir/CLIM" 
-    }
-}
-``` 
-
-Then add it as dependency:
-```
-dependencies {
-    implementation 'com.ianovir.clim:CLIM'
-}
-``` 
-
-## cURL
-
-```
-curl -L "https://dl.bintray.com/ianovir/CLIM/<FILE_PATH>" -o <FILE.EXT>
-```
-
 # Usage
 
 See the `Demo.java` for a simple example.
